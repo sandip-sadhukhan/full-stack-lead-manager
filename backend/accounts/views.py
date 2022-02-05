@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import permissions
+from rest_framework import permissions, serializers
 
 User = get_user_model()
 
@@ -31,3 +31,15 @@ class SignupView(APIView):
                     return Response({"success": "User created successfully"})
         else:
             return Response({"error": "Passwords do not match"})
+
+
+class GetUserInformation(APIView):
+    class UserSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = User
+            fields = ("name", "email")
+
+    def get(self, request, format=None):
+        user = request.user
+        serializer = self.UserSerializer(instance=user)
+        return Response(serializer.data)
