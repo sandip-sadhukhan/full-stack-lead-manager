@@ -70,10 +70,10 @@ export const signup =
 
 export const logout = () => (dispatch) => {
   dispatch({ type: LOGOUT });
+  toast.success(`Logout Successfully`);
 };
 
 export const authenticate = () => async (dispatch) => {
-  console.log("hi");
   const token = localStorage.getItem("token");
   const config = {
     headers: {
@@ -82,7 +82,7 @@ export const authenticate = () => async (dispatch) => {
   };
 
   try {
-    let res = await toast.promise(
+    await toast.promise(
       axios.get(`${BASE_API_URL}/api/accounts/get-user-info/`, config),
       {
         pending: "Logging in...",
@@ -90,15 +90,13 @@ export const authenticate = () => async (dispatch) => {
         error: "Login Fail 🤯",
       }
     );
-    toast.info(`Welcome, ${res.data.name}`);
     dispatch({
       type: LOGIN_SUCCESS,
       payload: { access: token },
     });
   } catch (err) {
-    console.log(err);
-    // dispatch({
-    //   type: LOGIN_FAIL,
-    // });
+    dispatch({
+      type: LOGIN_FAIL,
+    });
   }
 };

@@ -15,7 +15,7 @@ const Layout = (props) => {
         autoClose={6000}
         closeButton={AiOutlineClose}
         hideProgressBar={false}
-        position={toast.POSITION.BOTTOM_TOP}
+        position={toast.POSITION.BOTTOM_RIGHT}
         pauseOnHover={true}
         theme="colored"
       />

@@ -23,7 +23,7 @@ const Login = ({ login, isAuthenticated }) => {
   };
 
   if (isAuthenticated) {
-    return <Navigate to="/" />;
+    return <Navigate to="/dashboard" />;
   }
 
   return (
@@ -61,7 +61,7 @@ const Login = ({ login, isAuthenticated }) => {
                   <Button type="submit" variant="primary">
                     Login <RiLoginCircleFill className="ml-2" />
                   </Button>
-                  <p>
+                  <p className="mt-2">
                     Don't Have an account? <Link to="/signup">Signup Here</Link>
                   </p>
                 </Form>

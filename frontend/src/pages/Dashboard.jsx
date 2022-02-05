@@ -1,7 +1,29 @@
 import React from "react";
+import { Navigate } from "react-router-dom";
+import { connect } from "react-redux";
 
-const Dashboard = () => {
-  return <div>Dashboard</div>;
+const Dashboard = ({ isAuthenticated, loading }) => {
+  if (!isAuthenticated && !loading) {
+    return <Navigate to="/login" />;
+  }
+
+  return (
+    <>
+      {loading ? (
+        <h1>Loading</h1>
+      ) : (
+        <div>
+          Dashboard
+          <h1>Secret</h1>
+        </div>
+      )}
+    </>
+  );
 };
 
-export default Dashboard;
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+  loading: state.auth.loading,
+});
+
+export default connect(mapStateToProps)(Dashboard);
