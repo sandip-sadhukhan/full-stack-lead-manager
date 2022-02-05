@@ -123,10 +123,18 @@ class DeveloperList(APIView):
 
     def post(self, request, format=None):
         user = request.user
+        data = request.data
 
         serializer = self.DeveloperSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            developer = Developer.objects.create(
+                user=user,
+                name=serializer.data["name"],
+                email=serializer.data["email"],
+                phone=serializer.data["phone"],
+            )
+            serializer = self.DeveloperSerializer(instance=developer)
+
             return Response(
                 {"success": True, "data": serializer.data},
                 status=status.HTTP_201_CREATED,
@@ -135,6 +143,18 @@ class DeveloperList(APIView):
             return Response(
                 {"success": False, "error": serializer.errors},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class DeveloperDelete(APIView):
+    def delete(self, request, pk, format=None):
+        try:
+            developer = Developer.objects.get(user=request.user, id=pk).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Developer.DoesNotExist:
+            return Response(
+                data={"success": False, "error": "Developer does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
 

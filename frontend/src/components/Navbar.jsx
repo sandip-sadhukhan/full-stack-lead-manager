@@ -1,5 +1,10 @@
 import React from "react";
-import { Navbar as BootstrapNavbar, Container, Nav } from "react-bootstrap";
+import {
+  Navbar as BootstrapNavbar,
+  Container,
+  Nav,
+  NavDropdown,
+} from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import { connect } from "react-redux";
@@ -27,14 +32,20 @@ const Navbar = ({ isAuthenticated, logout }) => {
             </Nav.Link>
             {isAuthenticated ? (
               <>
-                <Nav.Link
-                  as={Link}
-                  to="/dashboard"
-                  active={pathname === "/dashboard"}
+                <NavDropdown
+                  title="Dashboard"
+                  id="basic-nav-dropdown"
+                  active={pathname.startsWith("/dashboard/")}
                 >
-                  Dashboard
-                </Nav.Link>
-                <Nav.Link onClick={logout}>Logout</Nav.Link>
+                  <NavDropdown.Item as={Link} to="/dashboard/lead">
+                    Lead
+                  </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/dashboard/developer/">
+                    Developer
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
+                </NavDropdown>
               </>
             ) : (
               <>

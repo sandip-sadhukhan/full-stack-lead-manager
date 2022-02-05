@@ -2,7 +2,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { connect } from "react-redux";
 
-const Dashboard = ({ isAuthenticated, loading }) => {
+const Lead = ({ isAuthenticated, loading }) => {
   if (!isAuthenticated && !loading) {
     return <Navigate to="/login" />;
   }
@@ -26,4 +26,4 @@ const mapStateToProps = (state) => ({
   loading: state.auth.loading,
 });
 
-export default connect(mapStateToProps)(Dashboard);
+export default connect(mapStateToProps)(Lead);

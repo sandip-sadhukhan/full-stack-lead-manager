@@ -30,7 +30,7 @@ const SignUp = ({ signup, isAuthenticated }) => {
   };
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/dashboard/developer" />;
   }
 
   return (
