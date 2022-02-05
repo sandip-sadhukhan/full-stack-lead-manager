@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { Row, Col, Container, Card, Form, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { RiLoginCircleFill } from "react-icons/ri";
+import { toast } from "react-toastify";
+import { connect } from "react-redux";
+import { signup } from "../redux/actions/auth";
 
-const SignUp = () => {
+const SignUp = ({ signup, isAuthenticated }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,8 +22,16 @@ const SignUp = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    alert("submit");
+    if (password !== password2) {
+      toast.error("Passwords do not match");
+    } else {
+      signup(name, email, password, password2);
+    }
   };
+
+  if (isAuthenticated) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <section id="signUp" style={{ paddingTop: "40px", paddingBottom: "20px" }}>
@@ -92,4 +103,8 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+
+export default connect(mapStateToProps, { signup })(SignUp);

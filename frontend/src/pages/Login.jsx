@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { Row, Col, Container, Card, Form, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { RiLoginCircleFill } from "react-icons/ri";
+import { login } from "../redux/actions/auth";
+import { connect } from "react-redux";
 
-const Login = () => {
+const Login = ({ login, isAuthenticated }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -17,8 +19,12 @@ const Login = () => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    alert("submit");
+    login(email, password);
   };
+
+  if (isAuthenticated) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <section id="login" style={{ paddingTop: "40px", paddingBottom: "200px" }}>
@@ -68,4 +74,8 @@ const Login = () => {
   );
 };
 
-export default Login;
+const mapStateToProps = (state) => ({
+  isAuthenticated: state.auth.isAuthenticated,
+});
+
+export default connect(mapStateToProps, { login })(Login);
