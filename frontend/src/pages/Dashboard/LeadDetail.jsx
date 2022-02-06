@@ -28,6 +28,9 @@ const LeadDetail = ({ loading, isAuthenticated }) => {
     clientPhone: "",
   });
 
+  const [assignedDevelopers, setAssignedDevelopers] = useState([]);
+  const [unAssignedDevelopers, setUnAssignedDevelopers] = useState([]);
+
   let { title, description, clientName, clientEmail, clientPhone } = formData;
 
   // fetch formData
@@ -63,6 +66,35 @@ const LeadDetail = ({ loading, isAuthenticated }) => {
     }
 
     fetchFormData();
+  }, [BASE_API_URL, token, id]);
+
+  // fetch assigned and unassigned developers
+  useEffect(() => {
+    async function fetchDevelopers() {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      try {
+        let res = await axios.get(
+          `${BASE_API_URL}/api/lead/developers/${id}/`,
+          config
+        );
+        let data = res.data;
+        if (data.success === true) {
+          // update
+          setAssignedDevelopers(data.data.assigned);
+          setUnAssignedDevelopers(data.data.unassigned);
+        } else {
+          toast.error("Something is wrong!");
+        }
+      } catch (err) {
+        toast.error("Something is wrong!");
+      }
+    }
+    fetchDevelopers();
   }, [BASE_API_URL, token, id]);
 
   const onChange = (e) => {
@@ -105,6 +137,10 @@ const LeadDetail = ({ loading, isAuthenticated }) => {
 
   const assignDeveloper = () => {
     alert("Assigned");
+  };
+
+  const removeDeveloper = (id) => {
+    alert(id);
   };
 
   if (!isAuthenticated && !loading) {
@@ -210,10 +246,11 @@ const LeadDetail = ({ loading, isAuthenticated }) => {
                       <div className="d-flex">
                         <Form.Select>
                           <option value="-1">----------</option>
-                          <option value="1">John</option>
-                          <option value="1">Jane</option>
-                          <option value="1">Loadk</option>
-                          <option value="1">Jie</option>
+                          {unAssignedDevelopers.map((dev) => (
+                            <option value={dev.id} key={dev.id}>
+                              {dev.name}
+                            </option>
+                          ))}
                         </Form.Select>
                         <Button
                           variant="primary"
@@ -233,16 +270,22 @@ const LeadDetail = ({ loading, isAuthenticated }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <td>1</td>
-                            <td>Sandip</td>
-                            <td>sandip@email.com</td>
-                            <td>
-                              <Button variant="outline-danger" size="sm">
-                                Remove
-                              </Button>
-                            </td>
-                          </tr>
+                          {assignedDevelopers.map((dev) => (
+                            <tr key={dev.id}>
+                              <td>{dev.id}</td>
+                              <td>{dev.name}</td>
+                              <td>{dev.email}</td>
+                              <td>
+                                <Button
+                                  onClick={() => removeDeveloper(dev.id)}
+                                  variant="outline-danger"
+                                  size="sm"
+                                >
+                                  Remove
+                                </Button>
+                              </td>
+                            </tr>
+                          ))}
                         </tbody>
                       </Table>
                     </Card.Body>

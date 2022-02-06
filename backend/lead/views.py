@@ -174,12 +174,43 @@ class DeveloperDelete(APIView):
 
 
 # Developer Add to a lead
-class DeveloperAdd(APIView):
-    def post(self, request, format=None):
+class DeveloperLead(APIView):
+    class DeveloperSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Developer
+            fields = ("id", "name", "email", "phone")
+
+    def get(self, request, pk, format=None):
+        data = request.data
+
+        try:
+            lead = Lead.objects.get(user=request.user, id=pk)
+            serializer = self.DeveloperSerializer(
+                instance=lead.developers.all(), many=True
+            )
+
+            unassignedDevelopers = self.DeveloperSerializer(
+                instance=lead.unAssignedDevelopers(), many=True
+            )
+
+            return Response(
+                {
+                    "success": True,
+                    "data": {
+                        "assigned": serializer.data,
+                        "unassigned": unassignedDevelopers.data,
+                    },
+                }
+            )
+
+        except Lead.DoesNotExist:
+            return Response({"success": False, "error": "Lead not found"})
+
+    def post(self, request, pk, format=None):
         data = request.data
 
         developerId = data.get("developerId")
-        leadId = data.get("leadId")
+        leadId = pk
 
         # validation
         if developerId is None:
@@ -190,16 +221,6 @@ class DeveloperAdd(APIView):
         if type(developerId) != int:
             return Response(
                 {"success": False, "error": "`developerId` field is an integer."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        if leadId is None:
-            return Response(
-                {"success": False, "error": "`leadId` field is required."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        if type(leadId) != int:
-            return Response(
-                {"success": False, "error": "`leadId` field is an integer."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

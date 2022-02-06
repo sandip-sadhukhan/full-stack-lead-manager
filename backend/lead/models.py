@@ -27,5 +27,8 @@ class Lead(models.Model):
     def __str__(self):
         return self.title
 
-    def allDevelopers(self):
-        return self.developers.all()
+    def unAssignedDevelopers(self):
+        queryset = Developer.objects.filter(user=self.user).exclude(
+            id__in=[developer.id for developer in self.developers.all()]
+        )
+        return queryset
