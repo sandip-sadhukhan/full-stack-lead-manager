@@ -14,10 +14,7 @@ A basic lead manager application developed in django and react.
 1. ReactJS for frontend.
 1. Django and Django Rest Framework for backend.
 1. React-bootstrap for the styling.
-1. Docker for containerized & deployment.
 
 ### Demo
 
-
 https://user-images.githubusercontent.com/44361140/152671360-5c71fbc3-43cf-4fcd-bcda-826ff3091209.mp4
-
