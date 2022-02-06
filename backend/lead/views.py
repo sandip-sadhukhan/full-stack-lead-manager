@@ -249,3 +249,47 @@ class DeveloperLead(APIView):
             return Response(
                 {"success": True, "message": "Developer is added into the lead."}
             )
+
+    def delete(self, request, pk, format=None):
+        data = request.data
+
+        developerId = data.get("developerId")
+        leadId = pk
+
+        # validation
+        if developerId is None:
+            return Response(
+                {"success": False, "error": "`developerId` field is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if type(developerId) != int:
+            return Response(
+                {"success": False, "error": "`developerId` field is an integer."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            lead = Lead.objects.get(user=request.user, id=leadId)
+        except Lead.DoesNotExist:
+            return Response(
+                {"success": False, "error": "Lead does't exist."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            developer = Developer.objects.get(user=request.user, id=developerId)
+        except Developer.DoesNotExist:
+            return Response(
+                {"success": False, "error": "Developer does't exist."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Add the developer into the lead
+        if developer not in lead.developers.all():
+            return Response({"success": False, "error": "Developer is not there."})
+        else:
+            lead.developers.remove(developer)
+
+            return Response(
+                {"success": True, "message": "Developer is removed from the lead."}
+            )

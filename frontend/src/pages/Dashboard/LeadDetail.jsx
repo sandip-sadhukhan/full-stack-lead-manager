@@ -30,6 +30,7 @@ const LeadDetail = ({ loading, isAuthenticated }) => {
 
   const [assignedDevelopers, setAssignedDevelopers] = useState([]);
   const [unAssignedDevelopers, setUnAssignedDevelopers] = useState([]);
+  const [selectedDeveloper, setSelectedDeveloper] = useState("-1");
 
   let { title, description, clientName, clientEmail, clientPhone } = formData;
 
@@ -135,12 +136,76 @@ const LeadDetail = ({ loading, isAuthenticated }) => {
     }
   };
 
-  const assignDeveloper = () => {
-    alert("Assigned");
+  const assignDeveloper = async () => {
+    if (selectedDeveloper === "-1") return;
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
+      let res = await axios.post(
+        `${BASE_API_URL}/api/lead/developers/${id}/`,
+        { developerId: parseInt(selectedDeveloper) },
+        config
+      );
+
+      let data = res.data;
+      if (data.success === true) {
+        // add id to assigned
+        let addedDev = [...unAssignedDevelopers].find(
+          (dev) => dev.id === parseInt(selectedDeveloper)
+        );
+        setAssignedDevelopers([...assignedDevelopers, addedDev]);
+        // removed id from unassigned
+        let newDevs = [...unAssignedDevelopers].filter(
+          (dev) => dev.id !== parseInt(selectedDeveloper)
+        );
+        setSelectedDeveloper("-1");
+        setUnAssignedDevelopers(newDevs);
+        toast.success("Developer is assigned!");
+      } else {
+        toast.error("Something is wrong");
+      }
+    } catch (err) {
+      toast.error("Something is wrong");
+    }
   };
 
-  const removeDeveloper = (id) => {
-    alert(id);
+  const removeDeveloper = async (developerId) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: {
+        developerId,
+      },
+    };
+    try {
+      let res = await axios.delete(
+        `${BASE_API_URL}/api/lead/developers/${id}/`,
+        config
+      );
+
+      let data = res.data;
+      if (data.success === true) {
+        // add id to unassigned
+        let addedDev = [...assignedDevelopers].find(
+          (dev) => dev.id === developerId
+        );
+        setUnAssignedDevelopers([...unAssignedDevelopers, addedDev]);
+        // removed id from assigned
+        let newDevs = [...assignedDevelopers].filter(
+          (dev) => dev.id !== developerId
+        );
+        setAssignedDevelopers(newDevs);
+        toast.success("Developer is removed!");
+      } else {
+        toast.error("Something is wrong");
+      }
+    } catch (err) {
+      toast.error("Something is wrong");
+    }
   };
 
   if (!isAuthenticated && !loading) {
@@ -244,10 +309,13 @@ const LeadDetail = ({ loading, isAuthenticated }) => {
                     </Card.Header>
                     <Card.Body>
                       <div className="d-flex">
-                        <Form.Select>
+                        <Form.Select
+                          value={selectedDeveloper}
+                          onChange={(e) => setSelectedDeveloper(e.target.value)}
+                        >
                           <option value="-1">----------</option>
                           {unAssignedDevelopers.map((dev) => (
-                            <option value={dev.id} key={dev.id}>
+                            <option value={`${dev.id}`} key={dev.id}>
                               {dev.name}
                             </option>
                           ))}
