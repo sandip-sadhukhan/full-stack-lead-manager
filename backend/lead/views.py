@@ -14,7 +14,7 @@ class LeadList(APIView):
         user = request.user
         queryset = Lead.objects.filter(user=user)
         serializer = self.LeadSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return Response(data={"success": True, "data": serializer.data})
 
     def post(self, request, format=None):
         data = request.data
@@ -76,7 +76,6 @@ class LeadDetail(APIView):
             lead = Lead.objects.get(user=user, pk=pk)
             serializer = self.LeadSerializer(instance=lead)
             data = serializer.data
-            data["developers"] = lead.allDevelopers()
             return Response({"success": True, "data": data})
 
         except Lead.DoesNotExist:
@@ -95,9 +94,25 @@ class LeadDetail(APIView):
             )
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data)
+                return Response({"success": True, "data": serializer.data})
             else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"success": False, "error": serializer.errors},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        except Lead.DoesNotExist:
+            return Response(
+                {"success": False, "error": "Lead is not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+    def delete(self, request, pk, format=None):
+        user = request.user
+
+        try:
+            lead = Lead.objects.get(user=user, pk=pk).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
         except Lead.DoesNotExist:
             return Response(

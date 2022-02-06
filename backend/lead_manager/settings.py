@@ -16,7 +16,6 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(" ")
-CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_HOSTS").split(" ")
 
 
 # Application definition
@@ -46,6 +45,12 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_HOSTS").split(" ")
+# CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = config("CORS_ALLOWED_HOSTS").split(" ")
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
 
 ROOT_URLCONF = "lead_manager.urls"
 

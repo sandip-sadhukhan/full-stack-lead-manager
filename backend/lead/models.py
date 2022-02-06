@@ -28,4 +28,4 @@ class Lead(models.Model):
         return self.title
 
     def allDevelopers(self):
-        return [developer.name for developer in self.developers.all()]
+        return self.developers.all()

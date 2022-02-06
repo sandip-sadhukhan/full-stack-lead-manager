@@ -7,6 +7,7 @@ import Lead from "./pages/Dashboard/Lead";
 import Developer from "./pages/Dashboard/Developer";
 import NotFound from "./pages/NotFound";
 import Layout from "./hocs/Layout";
+import LeadDetail from "./pages/Dashboard/LeadDetail";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/dashboard/lead" element={<Lead />} />
+        <Route path="/dashboard/lead/:id" element={<LeadDetail />} />
         <Route path="/dashboard/developer" element={<Developer />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

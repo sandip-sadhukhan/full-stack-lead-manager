@@ -33,14 +33,20 @@ const Navbar = ({ isAuthenticated, logout }) => {
             {isAuthenticated ? (
               <>
                 <NavDropdown
-                  title="Dashboard"
+                  title={
+                    pathname.startsWith("/dashboard/lead")
+                      ? "Lead"
+                      : pathname.startsWith("/dashboard/developer")
+                      ? "Developer"
+                      : "Dashboard"
+                  }
                   id="basic-nav-dropdown"
                   active={pathname.startsWith("/dashboard/")}
                 >
                   <NavDropdown.Item as={Link} to="/dashboard/lead">
                     Lead
                   </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/dashboard/developer/">
+                  <NavDropdown.Item as={Link} to="/dashboard/developer">
                     Developer
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
